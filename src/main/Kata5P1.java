@@ -3,17 +3,25 @@ package main;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
+import java.util.List;
+import static main.MailListReader.read;
 
 public class Kata5P1 {
-
+    
     public static void main(String[] args) throws IOException, SQLException {
         //Kata5P1 app = new Kata5P1();
         //app.selectAll();
         createNewTable();
+        List<String> mailList = read("C:/Users/ferna/Documents/NetBeansProjects/Kata5P1/email.txt");
+        Kata5P1 idt = new Kata5P1();
+        
+        for (String mail: mailList){
+            idt.insert(mail);
+        }
     }
     
     private Connection connect() {
@@ -57,4 +65,17 @@ public class Kata5P1 {
             System.out.println(e.getMessage());
         }
     }
+    
+    // Método para insertar datos en la tabla direcc_email
+    public void insert(String email) {
+        String sql = "INSERT INTO email(mail) VALUES(?)";
+        try (Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
 }
